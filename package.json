@@ -5,9 +5,12 @@
   , "keywords": ["twitter", "api"]
   , "author": "Jo Liss <joliss42@gmail.com>"
   , "repository": { "type": "git", "url": "" }
+  , "engines": {
+      "node": "0.6.x"
+    , "npm":  "1.0.x"
+  }
   , "dependencies":{
       "oauth": "*"
-    , "crypto": "*"
     , "gzippo": "*"
     , "express": "*"
     , "ejs": "*"
