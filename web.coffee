@@ -70,6 +70,13 @@ app.get "/sessions/callback", (req, res) ->
         maxAge: cookieMaxAge
       res.redirect '/'
 
+# TODO: This should probably be POST or DELETE, and/or CSRF protected
+app.get "/sessions/signout", (req, res) ->
+  for cookie in ['twfoauthrequesttoken', 'twfoauthrequesttokensecret', 'twfoauthaccesstoken', 'twfoauthaccesstokensecret', 'twfauthenticitytoken']
+    res.clearCookie cookie,
+      path: '/'
+  res.redirect '/'
+
 validAuthenticityToken = (req) ->
   throw 'error' unless req.authenticityToken
   req.authenticityToken == \
