@@ -8,7 +8,7 @@
   , "dependencies":{
       "oauth": "*"
     , "crypto": "*"
-    , "querystring": "*"
+    , "gzippo": "*"
     , "express": "*"
     , "ejs": "*"
     , "coffee-script": "*"

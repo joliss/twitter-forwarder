@@ -1,6 +1,7 @@
 express = require("express")
 util = require("util")
 OAuth = require("oauth").OAuth
+gzippo = require('gzippo')
 
 twitterConsumerKey = process.env["TWITTER_CONSUMER_KEY"]
 twitterConsumerSecret = process.env["TWITTER_CONSUMER_SECRET"]
@@ -27,7 +28,8 @@ app.configure ->
         path: '/'
         maxAge: cookieMaxAge
     next()
-  app.use express.static(__dirname + '/public')
+  app.use(gzippo.staticGzip(__dirname + '/public'))
+  app.use(gzippo.compress())
 
 app.dynamicHelpers
   loggedIn: (req, res) ->
@@ -36,8 +38,6 @@ app.dynamicHelpers
     req.authenticityToken
 
 app.get "/", (req, res) ->
-  console.log req.authenticityToken
-  console.log (req.headers['x-csrf-token'] || req.query.authenticity_token)
   res.render 'index.ejs'
 
 app.get "/sessions/connect", (req, res) ->
@@ -93,7 +93,6 @@ app.all /^\/twitter-api\/(.*)/, (req, res, next) ->
   # Parse URL
   # req.params[0] does not have query strings, so we use originalUrl
   url = req.originalUrl.replace('/twitter-api', '')
-  delete req.query.authenticity_token
   oauthConsumer()._performSecureRequest req.cookies.twfoauthaccesstoken, req.cookies.twfoauthaccesstokensecret, req.method, "http://api.twitter.com#{url}", null, null, null, (error, data, response) ->
     if not response
       res.send 500
