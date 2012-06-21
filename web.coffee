@@ -37,9 +37,6 @@ app.dynamicHelpers
   authenticityToken: (req, res) ->
     req.authenticityToken
 
-app.get "/test", (req, res) ->
-  res.render 'test.ejs', layout: false
-
 app.get "/sessions/connect", (req, res) ->
   oauthConsumer(req).getOAuthRequestToken (error, oauthToken, oauthTokenSecret, results) ->
     if error
