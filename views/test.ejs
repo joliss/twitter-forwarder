@@ -1,3 +1,10 @@
+<!doctype html>
+<html>
+<head>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="<%= authenticityToken %>" />
+</head>
+<body>
 <h1>Twitter pass-through backend</h1>
 
 <p>Log in: <a href="/sessions/connect">/sessions/connect</a>
@@ -29,3 +36,5 @@
     });
   </script>
 <% } %>
+</body>
+</html>

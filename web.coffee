@@ -8,8 +8,8 @@ twitterConsumerSecret = process.env["TWITTER_CONSUMER_SECRET"]
 
 cookieMaxAge = 1000*3600*24*30
 
-oauthConsumer = ->
-  new OAuth("https://twitter.com/oauth/request_token", "https://twitter.com/oauth/access_token", twitterConsumerKey, twitterConsumerSecret, "1.0A", "http://localhost:5000/sessions/callback", "HMAC-SHA1")
+oauthConsumer = (req) ->
+  new OAuth("https://twitter.com/oauth/request_token", "https://twitter.com/oauth/access_token", twitterConsumerKey, twitterConsumerSecret, "1.0A", "http://#{req.headers.host}/sessions/callback", "HMAC-SHA1")
 
 app = express.createServer()
 
@@ -37,11 +37,11 @@ app.dynamicHelpers
   authenticityToken: (req, res) ->
     req.authenticityToken
 
-app.get "/", (req, res) ->
-  res.render 'index.ejs'
+app.get "/test", (req, res) ->
+  res.render 'test.ejs', layout: null
 
 app.get "/sessions/connect", (req, res) ->
-  oauthConsumer().getOAuthRequestToken (error, oauthToken, oauthTokenSecret, results) ->
+  oauthConsumer(req).getOAuthRequestToken (error, oauthToken, oauthTokenSecret, results) ->
     if error
       res.send "Error getting OAuth request token : " + util.inspect(error), 500
     else
@@ -58,7 +58,7 @@ app.get "/sessions/callback", (req, res) ->
     path: '/'
   res.clearCookie 'twfoauthrequesttokensecret',
     path: '/'
-  oauthConsumer().getOAuthAccessToken req.cookies.twfoauthrequesttoken, req.cookies.twfoauthrequesttokensecret, req.query.oauth_verifier, (error, oauthAccessToken, oauthAccessTokenSecret, results) ->
+  oauthConsumer(req).getOAuthAccessToken req.cookies.twfoauthrequesttoken, req.cookies.twfoauthrequesttokensecret, req.query.oauth_verifier, (error, oauthAccessToken, oauthAccessTokenSecret, results) ->
     if error
       res.send "Error getting OAuth access token : " + util.inspect(error) + "[" + oauthAccessToken + "]" + "[" + oauthAccessTokenSecret + "]" + "[" + util.inspect(results) + "]", 500
     else
@@ -93,7 +93,7 @@ app.all /^\/twitter-api\/(.*)/, (req, res, next) ->
   # Parse URL
   # req.params[0] does not have query strings, so we use originalUrl
   url = req.originalUrl.replace('/twitter-api', '')
-  oauthConsumer()._performSecureRequest req.cookies.twfoauthaccesstoken, req.cookies.twfoauthaccesstokensecret, req.method, "http://api.twitter.com#{url}", null, null, null, (error, data, response) ->
+  oauthConsumer(req)._performSecureRequest req.cookies.twfoauthaccesstoken, req.cookies.twfoauthaccesstokensecret, req.method, "http://api.twitter.com#{url}", null, null, null, (error, data, response) ->
     if not response
       res.send 500
       return
