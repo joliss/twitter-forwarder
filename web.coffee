@@ -38,7 +38,7 @@ app.dynamicHelpers
     req.authenticityToken
 
 app.get "/test", (req, res) ->
-  res.render 'test.ejs', layout: null
+  res.render 'test.ejs', layout: false
 
 app.get "/sessions/connect", (req, res) ->
   oauthConsumer(req).getOAuthRequestToken (error, oauthToken, oauthTokenSecret, results) ->
@@ -101,5 +101,9 @@ app.all /^\/twitter-api\/(.*)/, (req, res, next) ->
       if response.headers[key]
         res.header(key, response.headers[key])
     res.send data, response.statusCode
+
+app.all //, (req, res, next) ->
+  # Drop your own application into index.ejs
+  res.render 'index.ejs', layout: false
 
 app.listen parseInt(process.env.PORT or 5000)
