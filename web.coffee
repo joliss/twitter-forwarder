@@ -97,6 +97,9 @@ app.all /^\/twitter-api\/(.*)/, (req, res, next) ->
   # Parse URL
   # req.params[0] does not have query strings, so we use originalUrl
   url = req.originalUrl.replace('/twitter-api', '')
+  # We could use https for the API, but since Twitter is a bit slow and we are
+  # not using any kind of keep-alive, we're keeping the server-to-server
+  # communication unencrypted.
   oauthConsumer(req)._performSecureRequest req.cookies.twfoauthaccesstoken, req.cookies.twfoauthaccesstokensecret, req.method, "http://api.twitter.com#{url}", null, null, null, (error, data, response) ->
     if not response
       res.send 500
