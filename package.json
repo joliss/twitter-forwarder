@@ -12,7 +12,7 @@
   , "dependencies":{
       "oauth": "*"
     , "gzippo": "*"
-    , "express": "*"
+    , "express": "~> 2.5"
     , "ejs": "*"
     , "coffee-script": "*"
   }
